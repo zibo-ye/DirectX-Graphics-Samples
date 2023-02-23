@@ -83,6 +83,13 @@ void D3D12nBodyGravity::LoadPipeline()
     ComPtr<IDXGIFactory4> factory;
     ThrowIfFailed(CreateDXGIFactory2(dxgiFactoryFlags, IID_PPV_ARGS(&factory)));
 
+	// Check to see if a copy of WinPixGpuCapturer.dll has already been injected into the application.
+    // This may happen if the application is launched through the PIX UI. 
+	if (GetModuleHandle(L"WinPixGpuCapturer.dll") == 0)
+	{
+		LoadLibrary(GetLatestWinPixGpuCapturerPath_Cpp17().c_str());
+	}
+
     if (m_useWarpDevice)
     {
         ComPtr<IDXGIAdapter> warpAdapter;
@@ -857,7 +864,7 @@ void D3D12nBodyGravity::Simulate(UINT threadIndex)
     pCommandList->SetComputeRootDescriptorTable(ComputeRootSRVTable, srvHandle);
     pCommandList->SetComputeRootDescriptorTable(ComputeRootUAVTable, uavHandle);
 
-    pCommandList->Dispatch(static_cast<int>(ceil(ParticleCount / 128.0f)), 1, 1);
+    pCommandList->Dispatch(static_cast<int>(ceil(ParticleCount / float(blockSize))), 1, 1);
 
     pCommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(pUavResource, D3D12_RESOURCE_STATE_UNORDERED_ACCESS, D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE));
 }

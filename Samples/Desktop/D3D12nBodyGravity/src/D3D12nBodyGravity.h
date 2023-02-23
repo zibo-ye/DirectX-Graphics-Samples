@@ -14,6 +14,7 @@
 #include "DXSample.h"
 #include "SimpleCamera.h"
 #include "StepTimer.h"
+#include "PixFinder.h"
 
 using namespace DirectX;
 
@@ -38,9 +39,10 @@ public:
 
 private:
     static const UINT FrameCount = 2;
-    static const UINT ThreadCount = 1;
+    static const UINT ThreadCount = 4;
     static const float ParticleSpread;
-    static const UINT ParticleCount = 10000;        // The number of particles in the n-body simulation.
+	static const UINT ParticleCount = 30000;        // The number of particles in the n-body simulation.
+	static const UINT blockSize = 64;
 
     // "Vertex" definition for particles. Triangle vertices are generated 
     // by the geometry shader. Color data will be assigned to those 
